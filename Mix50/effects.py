@@ -1,3 +1,24 @@
+import librosa
+import numpy as np
+import pandas as pd
+import soundfile as sf
+import pyrubberband as pyrb
+from scipy import interpolate
+from pydub import AudioSegment
+from sklearn.cluster import KMeans
+from IPython.display import Audio
+import scipy
+from essentia.standard import *
+import essentia.streaming as ess
+import essentia.standard as es
+from sklearn.preprocessing import StandardScaler
+from typing import List
+import matplotlib.pyplot as plt
+import sounddevice as sd
+from typing import Optional, List
+from Mix50.process import process
+
+
 class effects():
 
     def __init__(self):
@@ -593,8 +614,4 @@ class effects():
         y_array = np.array(y_new)
         y_final = np.concatenate([before_audio, y_array, after_audio])
         
-        #If play=True play the audio, if false return their raw audio
-        if play:
-            return Audio(y_final, rate=22050)
-        else: 
-            return y_final
+        return process(y_final)

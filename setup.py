@@ -21,7 +21,7 @@ setup(name='Mix50',
       author='Sean Mullins',
       author_email='smullins998@gmail.com',
       license='MIT',
-      packages=['mix50'],
+      packages=['Mix50'],
       install_requires=[
     'librosa==0.8.1',
     'numpy==1.24.0',
