@@ -23,12 +23,13 @@ class Effects():
         pass
 
 
-    def set_audio(self, y1, sr1, y2=None, sr2=None):
+    def set_audio(self, path, y1, sr1, y2=None, sr2=None):
         '''
-        Set the audio from our mixfify module
+        Set the audio from our mixfifty module
         '''
         self.y = y1
         self.sr = sr1
+        self.path = path
   
 
     def fade_out(self, start_time:int, fade_duration:int) -> object:

@@ -7,13 +7,15 @@ class Process:
     This class supports the effects module as a wrapper for further manipulations.
     '''
     
-    def set_audio(self, y1, sr1, y2=None, sr2=None):
+    def __init__(self, audio):
+        
         '''
         Set the audio from our mixfifty module
         '''
-        self.y = y1
-        self.sr = sr1
-    
+           
+        self.y, self.sr = audio, 22050
+       
+        
     def play(self):
         '''
         Plays the audio using IPython's Audio display.
