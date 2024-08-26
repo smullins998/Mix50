@@ -24,7 +24,7 @@ class Features:
         pass
     
     
-    def set_audio(self, path, y1, sr1, y2=None, sr2=None):
+    def set_audio(self, path, y1, sr1):
         '''
         Set the audio from our mixfifty module
         '''
