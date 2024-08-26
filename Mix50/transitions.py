@@ -29,6 +29,11 @@ class Transitions():
         self.features1.set_audio(path1,y1,sr1)
         self.features2.set_audio(path2,y2,sr2)
         
+        self.effects1 = Effects()
+        self.effects2 = Effects()
+        self.effects1.set_audio(path1,y1,sr1)
+        self.effects2.set_audio(path2,y2,sr2)
+        
     
     def crossfade_highpass(self):
         

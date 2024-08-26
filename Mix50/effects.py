@@ -17,7 +17,7 @@ from typing import Optional, List
 from Mix50.process import Process
 from Mix50.features import Features
 
-class Effects():
+class Effects:
 
     def __init__(self):
         pass
@@ -30,7 +30,26 @@ class Effects():
         self.y = y1
         self.sr = sr1
         self.path = path
-  
+        
+
+    def fade_between(self, sample, fade_in_duration, fade_out_duration):
+        
+        '''
+        A helper function to fade between small samples of audio;
+        Clicks and pops often occur when overlaying pieces of audio.
+        This will prevent that by applying linesplace fade between overlays. 
+        '''
+        sample_length = len(sample)
+        time = np.linspace(0, 1, sample_length)
+
+        fade_in_env = np.linspace(0, 1, int(sample_length * fade_in_duration))
+        fade_out_env = np.linspace(1, 0, int(sample_length * fade_out_duration))
+
+        sample[:len(fade_in_env)] *= fade_in_env
+        sample[-len(fade_out_env):] *= fade_out_env
+
+        return sample
+
 
     def fade_out(self, start_time:int, fade_duration:int) -> object:
         '''
@@ -201,6 +220,7 @@ class Effects():
         for fragment,time_rate in zip(range(num_fragments),time_rates):
             yn = speed_sample[int(fragment*frame_size): int((fragment+1)*frame_size)]
             yn = pyrb.time_stretch(yn, sr=self.sr,rate=time_rate)
+            yn = self.fade_between(yn, .003, .003) #Fade between as to prevent pops/clicks
             y_new += (list(yn))
 
         #Create final new audio
@@ -268,6 +288,7 @@ class Effects():
             normalized_cutoff_freq = log_interval / nyquist_freq
             b, a = scipy.signal.butter(order, normalized_cutoff_freq, btype='high', analog=False)
             yn = scipy.signal.lfilter(b, a, yn)
+            yn = self.fade_between(yn, .003, .003) #Fade between as to prevent pops/clicks
             y_new += (list(yn))
 
         #Alter after_audio with final cutoff
@@ -341,6 +362,7 @@ class Effects():
             normalized_cutoff_freq = log_interval / nyquist_freq
             b, a = scipy.signal.butter(order, normalized_cutoff_freq, btype='low', analog=False)
             yn = scipy.signal.lfilter(b, a, yn)
+            yn = self.fade_between(yn, .003, .003) #Fade between as to prevent pops/clicks
             y_new += (list(yn))
             
         #Alter after_audio with final cutoff
