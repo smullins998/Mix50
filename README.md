@@ -3,7 +3,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 <p align="center">
-  <img width="460" height="460" src="./Images/mix50.png">
+  <img width="850" height="460" src="./Images/transparent3.png">
 </p>
 
 # Mix50
