@@ -15,7 +15,6 @@ setup(
         'Programming Language :: Python :: 3.11',
         'Topic :: Multimedia :: Sound/Audio :: Analysis'
     ],
-    keywords='Fast and simple DJ and audio effects in Python with Librosa',
     url='https://github.com/smullins998/Mix50',
     author='Sean Mullins',
     author_email='smullins998@gmail.com',
