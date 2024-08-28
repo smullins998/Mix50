@@ -21,7 +21,7 @@ setup(
     license='MIT',
     packages=['Mix50'],
     install_requires=[
-        'librosa',
+        'librosa>=0.10.2.post1',
         'numpy',
         'pandas',
         'SoundFile',
