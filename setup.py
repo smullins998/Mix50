@@ -36,5 +36,6 @@ setup(name='Mix50',
     'matplotlib==3.6.3',
     'sounddevice', 
       ],
+      keywords=['python', 'audio', 'DSP', 'DJ', 'audio analysis']
       include_package_data=True,
       zip_safe=False)
