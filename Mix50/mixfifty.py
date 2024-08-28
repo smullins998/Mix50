@@ -2,7 +2,6 @@
 from .effects import Effects
 from .features import Features
 from .process import Process
-from .transitions import Transitions
 import librosa
 
 
@@ -41,7 +40,6 @@ class MixFifty:
         # Initialize all modules
         self.effects = Effects()
         self.features = Features()
-        self.transitions = Transitions()
 
     def load_audio(self, path1, path2=None):
         """
@@ -73,4 +71,3 @@ class MixFifty:
         # Pass the loaded audio to classes
         self.effects.set_audio(self.path1, self.y1, self.sr1)
         self.features.set_audio(self.path1, self.y1, self.sr1)
-        self.transitions.set_audio(self.path1, self.y1, self.sr1, self.path2, self.y2, self.sr2)
