@@ -3,7 +3,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 <p align="center">
-  <img width="460" height="460" src="./image.png">
+  <img width="460" height="460" src="./Images/mix50.png">
 </p>
 
 # Mix50
@@ -77,7 +77,7 @@ MixFifty.features.show_transition_points()
 
 ```
 <p align="center">
-  <img width="1000" height="460" src="./transition_cues.png">
+  <img width="1000" height="460" src="./Images/transition_cues.png">
 </p>
 
 ## Save & Export Audio
