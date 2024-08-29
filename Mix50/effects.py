@@ -199,7 +199,7 @@ class Effects:
         120 BPM to 150 BPM. If `play` is set to True, the modified audio will be played; otherwise, the raw modified audio
         will be returned.
         """
-        num_fragments = 15
+        num_fragments = 15 #Too high fragments will create clicks/pops
 
         #Calculate Speed Rate and chunk into speed fram
         speed_rate = (new_bpm/original_bpm)

@@ -141,6 +141,7 @@ class Transitions:
         
         #Get start time of transition song and overlay with other song
         audio1_sample_start = int(start_time1*sample_rate)
+        
         audio1_overlay = y1[audio1_sample_start:audio1_sample_start+(fade_duration2*sample_rate)]
         audio1_overlay = audio1_overlay * np.linspace(0,1,len(audio1_overlay)) #Fade the second song in. With this it is abrupt
         audio1_end = y1[audio1_sample_start+(fade_duration2*sample_rate):]

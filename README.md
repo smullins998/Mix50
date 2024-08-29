@@ -2,9 +2,10 @@
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-<p align="center">
-  <img width="460" height="460" src="./Images/mix50.png">
-</p>
+<picture>
+  <source srcset="./Images/mix50-inverted.png" media="(prefers-color-scheme: dark)" />
+  <img src="./Images/transparent3.png" alt="Your image description">
+</picture>
 
 # Mix50
 Mix50 is an audio effect and DSP library that runs effects on music files. 
