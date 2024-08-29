@@ -3,7 +3,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 <picture>
-  <source srcset="./Images/mix50.png" media="(prefers-color-scheme: dark)" />
+  <source srcset="./Images/mix50-transparent-inverted.png" media="(prefers-color-scheme: dark)" />
   <img src="./Images/transparent3.png" alt="Your image description">
 </picture>
 
