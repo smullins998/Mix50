@@ -9,7 +9,7 @@
 
 # Mix50
 Mix50 is an audio effect and DSP library that runs effects on music files. 
-You can retrieve audio features like key, bpm, beatgrid, transition cues. You can also apply audio effects like filters, fades, and time warping.
+You can retrieve audio features like key, bpm, beatgrid, transition cues. You can apply audio effects like filters, fades, and time warping. You can also attempt to mix and create transitions between two songs autonomously by using the crossfade method in the transitions module.
 
 
 ## Installation
