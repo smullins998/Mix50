@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='Mix50',
-    version='0.2',
+    version='0.3',
     description='Fast and simple DJ and audio effects in Python with Librosa',
     # long_description=long_description,
     long_description_content_type="text/markdown",
