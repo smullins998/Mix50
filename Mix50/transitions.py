@@ -39,16 +39,57 @@ class Transitions:
         self.effects_audio_2.set_audio(self.path2, self.y2,self.sr2)
 
 
-    def crossfade(self, cue_num:int, filter_type:str, fade_duration:int=15, cutoff_frequency:int=800) -> object:
+    def crossfade(self, 
+                  cue_num1:int, 
+                  cue_num2:int,
+                  filter_type:str, 
+                  fade_duration:int=15, 
+                  cutoff_frequency:int=0) -> object:
         """
-        Apply speed control, filter (high-pass or low-pass), and crossfade effect to two audio tracks based on a beat grid.
+    Apply speed control, filtering, and crossfade effects to two audio tracks based on their beat grids.
+
+    This method processes two audio tracks by aligning their beats, adjusting their speeds to match BPMs, 
+    applying specified filters, and performing a crossfade transition between them. The resulting audio 
+    is a seamless mix of both tracks with the desired effects applied.
+
+    Parameters:
+        cue_num1 (int):
+            The cue number for the first audio track. 
+            Determines the start time for applying speed control and other effects.
         
-        Parameters:
-        cue_num (int): The cue number to determine start and end times for effects application.
-        filter_type (str): The type of filter to apply. Choose from 'highpass' or 'lowpass'. Default is 'highpass'.
+        cue_num2 (int):
+            The cue number for the second audio track. 
+            Determines the start time for the fade in of the second track
         
-        Returns:
-        Process: An instance of the Process class containing the final mixed audio.
+        filter_type (str):
+            The type of filter to apply to the second audio track. 
+            Must be one of the following:
+                - 'highpass': Apply a high-pass filter.
+                - 'lowpass': Apply a low-pass filter.
+                - 'none': Do not apply any filter.
+        
+        fade_duration (int, optional):
+            The duration of the transition effect in seconds. 
+            Defaults to 15 seconds.
+        
+        cutoff_frequency (int, optional):
+            The cutoff frequency for the filter in Hertz (Hz). 
+            Defaults to 0 Hz.
+
+    Returns:
+        Process:
+            An instance of the `Process` class containing the final mixed audio 
+            after applying speed control, filtering, and crossfade effects.
+
+    Raises:
+        IndexError:
+            If `cue_num1` or `cue_num2` is out of range of the available loop cues 
+            in the beat grids of the audio tracks.
+        
+        ValueError:
+            If an invalid `filter_type` is provided. 
+            Valid options are 'highpass', 'lowpass', or 'none'.
+
         """
         
         # Retrieve audio features and data
@@ -61,14 +102,18 @@ class Transitions:
         fade_duration2 = fade_duration
         sample_rate = 22050
         cutoff_frequency = cutoff_frequency
+        
+        # Determine start and end times for the crossfade. Use the cue number and raise if out of range
+        try:
+            loop_cue_values2 = beats2[beats2.loop_cues.notna()].loop_cues.values.tolist()
+            loop_cue_values1 = beats1[beats1.loop_cues.notna()].loop_cues.values.tolist()    
+            start_time2 = loop_cue_values2[cue_num2]
+            end_time2 = loop_cue_values2[cue_num2 + 2]
+            start_time1 = loop_cue_values1[cue_num1]
+        except IndexError:
+            raise IndexError("The cue number is out of range. Please pick a smaller cue number.")
 
-        # Determine start and end times for the crossfade
-        loop_cue_values = beats2[beats2.loop_cues.notna()].loop_cues.values.tolist()
-        start_time2 = loop_cue_values[-cue_num]
-        end_time2 = loop_cue_values[-cue_num + 2]
-        #Get the point of fade in for the transition song
-        start_time1 = beats1[beats1.loop_cues.notna()].loop_cues.values.tolist()[cue_num]
-
+        
         # Apply speed control, high-pass filter, and fade out effects
         audio2 = self.effects_audio_2.speed_control(start_time2, end_time2, bpm2, bpm1).raw_audio()
         self.effects_audio_2.set_audio('./', audio2, sample_rate)
@@ -76,12 +121,16 @@ class Transitions:
         #Set filter types
         if filter_type == 'highpass':
             audio2 = self.effects_audio_2.highpass_control(start_time2, end_time2, cutoff_frequency).raw_audio()
+            self.effects_audio_2.set_audio('./', audio2, sample_rate)
         elif filter_type == 'lowpass':
             audio2 = self.effects_audio_2.lowpass_control(start_time2, end_time2, cutoff_frequency).raw_audio()
+            self.effects_audio_2.set_audio('./', audio2, sample_rate)
+        elif filter_type == 'none':
+            pass
+        
         else:
             raise ValueError("Invalid filter type: please choose either 'highpass' or 'lowpass'")
 
-        self.effects_audio_2.set_audio('./', audio2, sample_rate)
         audio2 = self.effects_audio_2.fade_out(end_time2, fade_duration2).raw_audio() #Start fading at the end of the FX
 
         #Now that we have our affected audio for song2, we need to calculate a new beatgrid because of altered speed
@@ -129,21 +178,22 @@ class Transitions:
         #Concat final beatgrid with effects taken place
         final_affected_beatgrid = pd.concat([before_affected_beatgrid_2, affected_beatgrid_2, after_affected_beatgrid_2])
 
-
         #Now we have the affected 2nd song, we need to overlay the first.
-        new_start_time2 = final_affected_beatgrid[final_affected_beatgrid.loop_cues.notna()].loop_cues.values.tolist()[-cue_num]
-        new_end_time2 = final_affected_beatgrid[final_affected_beatgrid.loop_cues.notna()].loop_cues.values.tolist()[-cue_num+2]
+        new_start_time2 = final_affected_beatgrid[final_affected_beatgrid.loop_cues.notna()].loop_cues.values.tolist()[cue_num2]
+        new_end_time2 = final_affected_beatgrid[final_affected_beatgrid.loop_cues.notna()].loop_cues.values.tolist()[cue_num2]
         
         #Break the audio into pieces
         audio2_overlay_len = int((new_end_time2+fade_duration2)*sample_rate)
-        audio2_beginning = audio2[:int(new_end_time2*sample_rate)]
-        audio2_overlay = audio2[int(new_end_time2*sample_rate):audio2_overlay_len]
+        audio2_end_sample = audio2_overlay_len+((fade_duration2+5)*sample_rate)
+        audio2_beginning_overlay_sample = int((new_end_time2+fade_duration2)*sample_rate)
+        audio2_beginning = audio2[:int((new_end_time2+fade_duration2)*sample_rate)]
+        audio2_overlay = audio2[audio2_beginning_overlay_sample:audio2_end_sample]
         
         #Get start time of transition song and overlay with other song
         audio1_sample_start = int(start_time1*sample_rate)
-        audio1_overlay = y1[audio1_sample_start:audio1_sample_start+(fade_duration2*sample_rate)]
-        audio1_overlay = audio1_overlay * np.linspace(0,1,len(audio1_overlay)) #Fade the second song in. With this it is abrupt
-        audio1_end = y1[audio1_sample_start+(fade_duration2*sample_rate):]
+        audio1_overlay = y1[audio1_sample_start:audio1_sample_start+((fade_duration2+5)*sample_rate)]
+        audio1_overlay = audio1_overlay * np.linspace(0,1,len(audio1_overlay)) #Fade the second song in. Without this it is abrupt
+        audio1_end = y1[audio1_sample_start+((fade_duration2+5)*sample_rate):]
         
         #Full overlay 
         full_overlay = audio2_overlay + audio1_overlay
