@@ -13,7 +13,7 @@ You can retrieve audio features like key, bpm, beatgrid, transition cues. You ca
 
 
 ## Installation
-> Tested on Python 3.11 and later
+> Tested on Python 3.10 and later
 ```bash
 
 $ pip install Mix50
