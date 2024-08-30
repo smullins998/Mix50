@@ -107,6 +107,8 @@ MixFifty.transitions.crossfade(cue_num1=8,cue_num2=6,fade_duration=10,filter_typ
 
 ## Save & Export Audio
 
+Save, play, and return audio with this module. Saving .MP3 files is not supported; please use .WAV
+
 ```python
 
 #Save affected audio to a variable 
@@ -124,7 +126,7 @@ affected_audio.raw_audio()
 # Output:
 # ==> array([ 9.06439368e-11,  1.45156775e-10, -1.51146651e-10, ..., 0.00000000e+00,  0.00000000e+00,  0.00000000e+00])
 
-# Save as an audio file
-affected_audio.save("path/to/save.mp3")
+# Save as an audio file: must use .wav; .mp3 not supported
+affected_audio.save("path/to/save.wav")
 
 ```

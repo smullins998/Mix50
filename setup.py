@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='Mix50',
-    version='0.3',
+    version='0.4',
     description='Fast and simple DJ and audio effects in Python with Librosa',
     # long_description=long_description,
     long_description_content_type="text/markdown",
@@ -22,7 +22,7 @@ setup(
     packages=['Mix50'],
     install_requires=[
         'librosa>=0.10.2.post1',
-        'numpy',
+        'numpy<2',
         'pandas',
         'SoundFile',
         'pyrubberband',

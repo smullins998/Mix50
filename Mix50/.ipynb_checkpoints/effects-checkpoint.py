@@ -145,12 +145,14 @@ class Effects:
         fade_samples = int(fade_duration * self.sr)
         end_sample = min(start_sample + fade_samples, total_samples)
         
+        # Create fade-out envelope
+        fading_audio = self.y[start_sample:end_sample]
+
         #Error handling for OOB time arguments
         if len(fading_audio) == 0:
             raise ValueError("The start time is out of bounds; please choose a start time within the length of the audio")
 
-        # Create fade-out envelope
-        fading_audio = self.y[start_sample:end_sample]
+        
         fade_env = np.linspace(0,1, num=len(fading_audio))
         fading_audio *= fade_env
         

@@ -25,7 +25,7 @@ class Process:
     
     def save(self, file_path: str):
         '''
-        Saves the audio data to a file in PCM 24-bit format.
+        Saves the audio data to a file in PCM 24-bit format. MP3 is not supported! Please use .WAV!
         '''
         sf.write(file_path, self.y, 22050, 'PCM_24')
         return f"Exported to {file_path}"
