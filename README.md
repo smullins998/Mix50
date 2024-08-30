@@ -81,8 +81,31 @@ MixFifty.features.show_transition_points()
   <img width="1000" height="460" src="./Images/transition_cues.png">
 </p>
 
+
+## Audio Transitions
+
+Mix50 generates transitions based on the beatgrid derived from the audio.
+
+### Parameters
+
+- **`cue_num1`**: Specifies the transition cue for the start of song #1. Typically, songs have up to 10 transition points, but this parameter allows for experimentation.
+  
+- **`cue_num2`**: Specifies the transition cue for the start of song #2. As with `cue_num1`, songs generally have up to 10 transition points, but this parameter is designed for experimentation.
+
+- **`filter_type`**: Specifies the filter you want to apply to transition the audios. Choices are 'highpass', 'lowpass', or 'none.'
+```python
+
+#Create mixfifty instance
+Mixfifty = Mix50.MixFifty()
+
+#Load Two Audio files
+MixFifty.load_audio('your_mp3_file1.mp3', 'your_mp3_file2.mp3')
+
+#Create crossfade transition
+MixFifty.transitions.crossfade(cue_num1=8,cue_num2=6,fade_duration=10,filter_type='none')
+```
+
 ## Save & Export Audio
-> All 'effects' methods will return a 'process' object which should be used further to export or save the affected audio
 
 ```python
 
@@ -104,4 +127,4 @@ affected_audio.raw_audio()
 # Save as an audio file
 affected_audio.save("path/to/save.mp3")
 
-
+```
