@@ -13,9 +13,13 @@ You can retrieve audio features like key, bpm, beatgrid, transition cues. You ca
 
 
 ## Installation
-> Tested on Python 3.11 and later
-```bash
 
+> Users must install PortAudio for I/O capabilities before installing Mix50
+
+> Tested on Python 3.10 and later
+
+```bash
+$ sudo apt install portaudio19-dev 
 $ pip install Mix50
 ```
 
