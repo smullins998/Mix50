@@ -13,6 +13,7 @@ import essentia.standard as es
 from sklearn.preprocessing import StandardScaler
 import sounddevice as sd
 from typing import Optional, List
+
 from Mix50.process import Process
 from Mix50.features import Features
 
@@ -22,7 +23,7 @@ class Effects:
         pass
 
 
-    def set_audio(self, path, y1, sr1, y2=None, sr2=None):
+    def __set_audio(self, path, y1, sr1, y2=None, sr2=None):
         '''
         Set the audio from our mixfifty module
         '''
@@ -50,7 +51,7 @@ class Effects:
         return sample
 
 
-    def fade_out(self, start_time:int, fade_duration:int) -> object:
+    def fade_out(self, start_time: int, fade_duration: int) -> object:
         '''
         Apply a fade-out effect to the audio signal.
 
@@ -109,7 +110,7 @@ class Effects:
         return Process(full_audio)
     
 
-    def fade_in(self, start_time:int, fade_duration:int) -> object:
+    def fade_in(self, start_time: int, fade_duration: int) -> object:
         
         '''
         Apply a fade-in effect to the audio signal.
@@ -170,7 +171,7 @@ class Effects:
         return Process(full_audio)
 
 
-    def speed_control(self, start_time:int, end_time:int, original_bpm:int, new_bpm:int) -> object:
+    def speed_control(self, start_time: int, end_time: int, original_bpm: int, new_bpm: int) -> object:
         """
         Adjust the speed of a given audio sample between specified start and end times to match a new BPM.
 
@@ -201,33 +202,30 @@ class Effects:
         120 BPM to 150 BPM. If `play` is set to True, the modified audio will be played; otherwise, the raw modified audio
         will be returned.
         """
-        num_fragments = 15 #Too high fragments will create clicks/pops
+        NUM_FRAGMENTS = 15  #Too high fragments will create clicks/pops
 
         #Calculate Speed Rate and chunk into speed fram
         speed_rate = (new_bpm/original_bpm)
-        speed_frags = abs((1-speed_rate) / num_fragments)
+        speed_frags = abs((1-speed_rate) / NUM_FRAGMENTS)
         
         time_rates = [] #Get time rates
         start_rate = 1 #Start at current bpm
 
         #Append Speed rates over 15 intervals
-        for i in range(num_fragments):
+        for i in range(NUM_FRAGMENTS):
             start_rate += speed_frags if speed_rate >= 1 else -speed_frags
             time_rates.append(start_rate)
 
-            
         y_new = [] #Create list to store stretched audio
         speed_sample = self.y[int(start_time*self.sr): int(end_time*self.sr)]
-        frame_size = len(speed_sample) / num_fragments
+        frame_size = len(speed_sample) / NUM_FRAGMENTS
 
         before_sample = self.y[:int(start_time*self.sr)]
         after_sample = pyrb.time_stretch(self.y[int(end_time*self.sr):], sr=self.sr, rate=speed_rate)
-        pct = (end_time - start_time )/ num_fragments
-        start = 0
-        end = num_fragments
+        pct = (end_time - start_time )/ NUM_FRAGMENTS
 
         #Append stretched audio to y_new
-        for fragment,time_rate in zip(range(num_fragments),time_rates):
+        for fragment,time_rate in zip(range(NUM_FRAGMENTS),time_rates):
             yn = speed_sample[int(fragment*frame_size): int((fragment+1)*frame_size)]
             yn = pyrb.time_stretch(yn, sr=self.sr,rate=time_rate)
             yn = self.__fade_between(yn, .003, .003) #Fade between as to prevent pops/clicks
@@ -240,7 +238,7 @@ class Effects:
         return Process(y_final)
 
 
-    def highpass_control(self, start_time:int, end_time:int, cutoff_freq:int, order=5) -> object:
+    def highpass_control(self, start_time: int, end_time: int, cutoff_freq: int, order=5) -> object:
 
         """
         Applies a progressive high-pass filter to an audio segment between specified start and end times.
@@ -277,7 +275,7 @@ class Effects:
         This will apply a progressive high-pass filter to the audio segment between 10 and 20 seconds, starting with
         a low cutoff frequency and increasing it progressively to 500 Hz.
         """
-        num_fragments = 50
+        NUM_FRAGMENTS = 50
   
         #Init different chuncks of audio
         highpass_audio = self.y[int(start_time*self.sr):int(end_time*self.sr)]
@@ -286,13 +284,13 @@ class Effects:
         
         #Init progressive filtering with intervals
         cutoff_log = np.log10(cutoff_freq)
-        log_intervals = np.logspace(1.7, cutoff_log, num_fragments)
-        frame_size = len(highpass_audio) / num_fragments
+        log_intervals = np.logspace(1.7, cutoff_log, NUM_FRAGMENTS)
+        frame_size = len(highpass_audio) / NUM_FRAGMENTS
         
         y_new = []
 
         #Loop through and apply progressive filter to audio
-        for frame,log_interval in zip(range(num_fragments),log_intervals):
+        for frame,log_interval in zip(range(NUM_FRAGMENTS),log_intervals):
             yn = highpass_audio[int(frame*frame_size): int((frame+1)*frame_size)]
             nyquist_freq = 0.5 * self.sr
             normalized_cutoff_freq = log_interval / nyquist_freq
@@ -314,7 +312,7 @@ class Effects:
     
     
 
-    def lowpass_control(self, start_time:int, end_time:int, cutoff_freq:int, order=5) -> object:
+    def lowpass_control(self, start_time: int, end_time: int, cutoff_freq: int, order=5) -> object:
 
         """
         Applies a progressive low-pass filter to an audio segment between specified start and end times.
@@ -351,7 +349,7 @@ class Effects:
         This will apply a progressive low-pass filter to the audio segment between 10 and 20 seconds, starting with
         a high cutoff frequency and decreasing it progressively to 500 Hz.
         """
-        num_fragments = 50
+        NUM_FRAGMENTS = 50
         
         #Init different chuncks of audio
         highpass_audio = self.y[int(start_time*self.sr):int(end_time*self.sr)]
@@ -360,13 +358,13 @@ class Effects:
 
         #Init progressive filtering with intervals
         cutoff_log = np.log10(cutoff_freq)
-        log_intervals = np.logspace(4, cutoff_log, num_fragments)
-        frame_size = len(highpass_audio) / num_fragments
+        log_intervals = np.logspace(4, cutoff_log, NUM_FRAGMENTS)
+        frame_size = len(highpass_audio) / NUM_FRAGMENTS
         
         y_new = [] #New highpass audio list
 
         #Loop through and apply progressive filter to audio
-        for frame,log_interval in zip(range(num_fragments),log_intervals):
+        for frame,log_interval in zip(range(NUM_FRAGMENTS),log_intervals):
             yn = highpass_audio[int(frame*frame_size): int((frame+1)*frame_size)]
             nyquist_freq = 0.5 * self.sr
             normalized_cutoff_freq = log_interval / nyquist_freq

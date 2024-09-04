@@ -14,6 +14,7 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import sounddevice as sd
 from typing import Optional, List
+
 from Mix50.process import Process
 
     
@@ -24,7 +25,7 @@ class Features:
         pass
     
     
-    def set_audio(self, path, y1, sr1):
+    def _set_audio(self, path, y1, sr1):
         '''
         Set the audio from our mixfifty module
         '''
@@ -46,15 +47,15 @@ class Features:
             DataFrame of transition points in seconds. Includes columns for beats, downbeats, loop cues, and transitions.
         """
 
+        # Low-pass filter setup
+        CUTOFF_HZ = 70
+        NYQUIST = 0.5 * self.sr
+        normal_cutoff = CUTOFF_HZ / NYQUIST
+        b, a = scipy.signal.butter(8, normal_cutoff, btype='low')
+
         # Detect tempo and beats using librosa
         tempo, beats = librosa.beat.beat_track(y=self.y, sr=self.sr)
         beat_times = [round(i, 3) for i in librosa.frames_to_time(beats)]
-
-        # Low-pass filter setup
-        cutoff_hz = 70
-        nyquist = 0.5 * self.sr
-        normal_cutoff = cutoff_hz / nyquist
-        b, a = scipy.signal.butter(8, normal_cutoff, btype='low')
 
         # Apply low-pass filter to audio
         y_low = scipy.signal.lfilter(b, a, self.y)
@@ -62,8 +63,8 @@ class Features:
         y_perc = scipy.signal.lfilter(b, a, y_perc)
 
         # RMS and smoothing parameters
-        window_duration = 0.05
-        frame_length = int(window_duration * self.sr)
+        WINDOW_DURATION = 0.05
+        frame_length = int(WINDOW_DURATION * self.sr)
         hop_length = frame_length // 2
 
         # RMS calculation and smoothing

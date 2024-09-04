@@ -61,17 +61,20 @@ class MixFifty:
         The audio files are loaded using librosa with a sample rate of 22050 Hz.
         If only one audio file is provided, the second audio is set to None.
         """
+
+        SAMPLE_RATE = 22050
+        
         self.path1 = path1
         self.path2 = path2
-        self.y1, self.sr1 = librosa.load(path1, sr=22050)
+        self.y1, self.sr1 = librosa.load(path1, sr=SAMPLE_RATE)
         
         if path2:
-            self.y2, self.sr2 = librosa.load(path2, sr=22050)
+            self.y2, self.sr2 = librosa.load(path2, sr=SAMPLE_RATE)
         else:
             self.y2 = None
             self.sr2 = None
 
         # Pass the loaded audio to classes
-        self.effects.set_audio(self.path1, self.y1, self.sr1)
-        self.features.set_audio(self.path1, self.y1, self.sr1)
-        self.transitions.set_audio(self.path1, self.y1, self.sr1, self.path2, self.y2, self.sr2)
+        self.effects._set_audio(self.path1, self.y1, self.sr1)
+        self.features._set_audio(self.path1, self.y1, self.sr1)
+        self.transitions._set_audio(self.path1, self.y1, self.sr1, self.path2, self.y2, self.sr2)
